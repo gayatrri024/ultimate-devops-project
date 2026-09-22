@@ -39,3 +39,24 @@ jobs:
 
       - name: Run tests
         run: python -m pytest
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    strategy:
+      matrix:
+        service:
+          - product-service
+          - order-service
+          - user-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ matrix.service }}:${{ github.sha }} \
+            ./app/${{ matrix.service }}
