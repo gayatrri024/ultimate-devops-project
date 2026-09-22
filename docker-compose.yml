@@ -1,0 +1,7 @@
+services:
+  product-service:
+    build:
+      context: ./app/product-service
+    container_name: product-service
+    ports:
+      - "8000:8000"
