@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+spec:
+  replicas: {{ .Values.orderService.replicas }}
+
+  selector:
+    matchLabels:
+      app: order-service
+
+  template:
+    metadata:
+      labels:
+        app: order-service
+
+    spec:
+      containers:
+        - name: order-service
+          image: {{ .Values.orderService.image }}
+          imagePullPolicy: Never
+          ports:
+            - containerPort: {{ .Values.orderService.port }}
