@@ -1,4 +1,4 @@
-name: CI
+ name: CI
 
 on:
   push:
@@ -55,8 +55,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build Docker image
         run: |
           docker build \
-            -t ${{ matrix.service }}:${{ github.sha }} \
+            -t gayatri1702/${{ matrix.service }}:${{ github.sha }} \
+            -t gayatri1702/${{ matrix.service }}:latest \
             ./app/${{ matrix.service }}
+
+      - name: Push Docker images
+        run: |
+          docker push gayatri1702/${{ matrix.service }}:${{ github.sha }}
+          docker push gayatri1702/${{ matrix.service }}:latest
