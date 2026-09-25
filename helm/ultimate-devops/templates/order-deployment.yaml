@@ -18,6 +18,6 @@ spec:
       containers:
         - name: order-service
           image: {{ .Values.orderService.image }}
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.orderService.port }}

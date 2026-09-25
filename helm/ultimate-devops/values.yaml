@@ -1,14 +1,14 @@
 productService:
-  image: product-service:1.0
+  image: gayatri1702/product-service:latest
   replicas: 2
   port: 8000
 
 orderService:
-  image: order-service:1.0
+  image: gayatri1702/order-service:latest
   replicas: 2
   port: 8001
 
 userService:
-  image: user-service:1.0
+  image: gayatri1702/user-service:latest
   replicas: 2
   port: 8002
