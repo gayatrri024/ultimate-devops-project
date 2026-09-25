@@ -1,4 +1,4 @@
- name: CI
+name: CI
 
 on:
   push:
@@ -9,8 +9,23 @@ on:
       - main
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   test:
     runs-on: ubuntu-latest
+    needs: security
 
     strategy:
       matrix:
@@ -40,7 +55,7 @@ jobs:
       - name: Run tests
         run: python -m pytest
 
-  docker-build:
+  docker-build-scan-push:
     runs-on: ubuntu-latest
     needs: test
 
@@ -68,7 +83,15 @@ jobs:
             -t gayatri1702/${{ matrix.service }}:latest \
             ./app/${{ matrix.service }}
 
-      - name: Push Docker images
+      - name: Scan image with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: gayatri1702/${{ matrix.service }}:${{ github.sha }}
+          only-severities: critical,high
+          exit-code: true
+
+      - name: Push Docker image
         run: |
           docker push gayatri1702/${{ matrix.service }}:${{ github.sha }}
           docker push gayatri1702/${{ matrix.service }}:latest
